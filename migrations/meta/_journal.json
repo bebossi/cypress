@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1707993139026,
+      "tag": "0000_black_slipstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707994573581,
+      "tag": "0001_whole_sway",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707995373267,
+      "tag": "0002_woozy_elektra",
+      "breakpoints": true
+    }
+  ]
+}
