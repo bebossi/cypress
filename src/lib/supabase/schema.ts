@@ -7,8 +7,8 @@ import {
   integer,
   boolean,
 } from 'drizzle-orm/pg-core'
-import { sql } from 'drizzle-orm'
-import { prices, subscriptionStatus, users } from '../../../migrations/schema'
+import { relations, sql } from 'drizzle-orm'
+import { prices, products, subscriptionStatus, users } from '../../../migrations/schema'
 
 export const workspaces = pgTable('workspaces', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
@@ -40,9 +40,11 @@ export const folders = pgTable('folders', {
   data: text('data'),
   inTrash: text('in_trash'),
   bannerUrl: text('banner_url'),
-  workspaceId: uuid('workspace_id').references(() => workspaces.id, {
-    onDelete: 'cascade',
-  }),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, {
+      onDelete: 'cascade',
+    }),
 })
 
 export const files = pgTable('files', {
@@ -58,12 +60,16 @@ export const files = pgTable('files', {
   data: text('data'),
   inTrash: text('in_trash'),
   bannerUrl: text('banner_url'),
-  workspaceId: uuid('workspace_id').references(() => workspaces.id, {
-    onDelete: 'cascade',
-  }),
-  folderId: uuid('folder_id').references(() => folders.id, {
-    onDelete: 'cascade',
-  }),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, {
+      onDelete: 'cascade',
+    }),
+  folderId: uuid('folder_id')
+    .notNull()
+    .references(() => folders.id, {
+      onDelete: 'cascade',
+    }),
 })
 
 export const subscriptions = pgTable('subscriptions', {
@@ -120,3 +126,14 @@ export const collaborators = pgTable('collaborators', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
 })
+
+export const productsRelations = relations(products, ({ many }) => ({
+  prices: many(prices),
+}))
+
+export const pricesRelations = relations(prices, ({ one }) => ({
+  product: one(products, {
+    fields: [prices.productId],
+    references: [products.id],
+  }),
+}))

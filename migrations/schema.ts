@@ -10,7 +10,7 @@ import {
   bigint,
   integer,
 } from 'drizzle-orm/pg-core'
-import { sql } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 
 export const keyStatus = pgEnum('key_status', ['default', 'valid', 'invalid', 'expired'])
 export const keyType = pgEnum('key_type', [
@@ -49,7 +49,9 @@ export const subscriptionStatus = pgEnum('subscription_status', [
 
 export const workspaces = pgTable('workspaces', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    .defaultNow()
+    .notNull(),
   workspaceOwner: uuid('workspace_owner').notNull(),
   title: text('title').notNull(),
   iconId: text('icon_id').notNull(),
@@ -61,7 +63,9 @@ export const workspaces = pgTable('workspaces', {
 
 export const folders = pgTable('folders', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    .defaultNow()
+    .notNull(),
   title: text('title').notNull(),
   iconId: text('icon_id').notNull(),
   data: text('data'),
@@ -74,7 +78,9 @@ export const folders = pgTable('folders', {
 
 export const files = pgTable('files', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    .defaultNow()
+    .notNull(),
   title: text('title').notNull(),
   iconId: text('icon_id').notNull(),
   data: text('data'),
@@ -194,3 +200,13 @@ export const collaborators = pgTable('collaborators', {
     .references(() => users.id, { onDelete: 'cascade' }),
   id: uuid('id').defaultRandom().primaryKey().notNull(),
 })
+export const productsRelations = relations(products, ({ many }) => ({
+  prices: many(prices),
+}))
+
+export const pricesRelations = relations(prices, ({ one }) => ({
+  product: one(products, {
+    fields: [prices.productId],
+    references: [products.id],
+  }),
+}))

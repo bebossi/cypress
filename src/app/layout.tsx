@@ -7,6 +7,7 @@ import { DM_Sans } from 'next/font/google'
 import { twMerge } from 'tailwind-merge'
 import AppStateProvider from '@/lib/providers/state-provider'
 import { SupabaseUserProvider } from '@/lib/providers/supabase-user-provider'
+import { SocketProvider } from '@/lib/providers/socket-provider'
 
 const inter = DM_Sans({ subsets: ['latin'] })
 
@@ -23,13 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={twMerge('bg-background', inter.className)}>
-        <AppStateProvider>
-          <SupabaseUserProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-              {children}
-            </ThemeProvider>
-          </SupabaseUserProvider>
-        </AppStateProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <AppStateProvider>
+            <SupabaseUserProvider>
+              <SocketProvider>{children}</SocketProvider>
+            </SupabaseUserProvider>
+          </AppStateProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
